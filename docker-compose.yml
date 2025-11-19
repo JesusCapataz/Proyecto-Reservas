@@ -1,0 +1,31 @@
+
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: proyecto-reservas-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: reservasDB
+      POSTGRES_USER: reservasuser
+      POSTGRES_PASSWORD: 123123
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - reservas-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reservasuser -d reservasDB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  reservas-network:
+    driver: bridge
