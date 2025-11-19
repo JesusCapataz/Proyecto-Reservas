@@ -28,6 +28,19 @@ public class User {
     private Role role;
 
     private Boolean status;
+
+    @Column(nullable =false)
     private String passwordHash;
+
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (status == null) {
+            status = true;
+        }
+    }
 }

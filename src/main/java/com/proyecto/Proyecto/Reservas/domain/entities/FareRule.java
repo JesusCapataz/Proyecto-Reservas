@@ -3,6 +3,8 @@ package com.proyecto.Proyecto.Reservas.domain.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "fare_rules")
 @Data
@@ -26,7 +28,7 @@ public class FareRule {
     @JoinColumn(name = "to_stop_id")
     private Stop toStop;
 
-    private Double basePrice;
+    private BigDecimal basePrice;
     private String discounts;
     private Boolean dynamicPricing;
 }
