@@ -26,4 +26,14 @@ public class Route {
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
     private List<Stop> stops;
+
+    public void addStop(Stop stop) {
+        stops.add(stop);
+        stop.setRoute(this);
+    }
+
+    public void removeStop(Stop stop) {
+        stops.remove(stop);
+        stop.setRoute(null);
+    }
 }
