@@ -4,6 +4,8 @@ import com.proyecto.Proyecto.Reservas.domain.entities.FareRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,7 +20,7 @@ class FareRuleRepositoryTest extends AbstractIntegrationDBTest {
     void shouldSaveAndFindFareRule() {
         // Given
         FareRule rule = FareRule.builder()
-                .basePrice(50000.0)
+                .basePrice(new BigDecimal(5000))
                 .dynamicPricing(true)
                 .build();
         fareRuleRepository.save(rule);
