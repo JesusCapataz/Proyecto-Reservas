@@ -4,14 +4,17 @@ import com.proyecto.Proyecto.Reservas.domain.enums.PaymentMethod;
 import com.proyecto.Proyecto.Reservas.domain.enums.TicketStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "tickets")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder(toBuilder = true)
 public class Ticket extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

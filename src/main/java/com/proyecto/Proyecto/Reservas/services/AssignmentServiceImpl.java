@@ -8,14 +8,13 @@ import com.proyecto.Proyecto.Reservas.domain.repositories.UserRepository;
 import com.proyecto.Proyecto.Reservas.exception.NotFoundException;
 import com.proyecto.Proyecto.Reservas.services.mapper.AssignmentMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -28,8 +27,6 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public AssignmentResponse create(AssignmentCreateRequest request) {
-        log.info("Creating assignment for trip: {} driver: {} dispatcher: {}",
-                request.tripId(), request.driverId(), request.dispatcherId());
 
         // Validar que el trip existe
         var trip = tripRepository.findById(request.tripId())
@@ -64,7 +61,6 @@ public class AssignmentServiceImpl implements AssignmentService {
         assignment.setAssignedAt(LocalDateTime.now());
 
         var savedAssignment = assignmentRepository.save(assignment);
-        log.info("Assignment created with id: {}", savedAssignment.getId());
 
         return assignmentMapper.toResponse(savedAssignment);
     }
@@ -72,7 +68,6 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional(readOnly = true)
     public AssignmentResponse getById(Long id) {
-        log.info("Getting assignment by id: {}", id);
         return assignmentRepository.findById(id)
                 .map(assignmentMapper::toResponse)
                 .orElseThrow(() -> new NotFoundException("Assignment not found with id: " + id));
@@ -81,7 +76,6 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional(readOnly = true)
     public AssignmentResponse getByTripId(Long tripId) {
-        log.info("Getting assignment for trip: {}", tripId);
         return assignmentRepository.findByTripId(tripId)
                 .map(assignmentMapper::toResponse)
                 .orElseThrow(() -> new NotFoundException("Assignment not found for trip: " + tripId));
@@ -90,13 +84,11 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional(readOnly = true)
     public List<AssignmentResponse> getAll() {
-        log.info("Getting all assignments");
         return assignmentMapper.toResponseList(assignmentRepository.findAll());
     }
 
     @Override
     public AssignmentResponse update(Long id, AssignmentUpdateRequest request) {
-        log.info("Updating assignment with id: {}", id);
 
         var assignment = assignmentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Assignment not found with id: " + id));
@@ -116,20 +108,17 @@ public class AssignmentServiceImpl implements AssignmentService {
         assignmentMapper.updateEntityFromDto(request, assignment);
         var updatedAssignment = assignmentRepository.save(assignment);
 
-        log.info("Assignment updated with id: {}", updatedAssignment.getId());
         return assignmentMapper.toResponse(updatedAssignment);
     }
 
     @Override
     public void delete(Long id) {
-        log.info("Deleting assignment with id: {}", id);
 
         if (!assignmentRepository.existsById(id)) {
             throw new NotFoundException("Assignment not found with id: " + id);
         }
 
         assignmentRepository.deleteById(id);
-        log.info("Assignment deleted with id: {}", id);
     }
 }
 

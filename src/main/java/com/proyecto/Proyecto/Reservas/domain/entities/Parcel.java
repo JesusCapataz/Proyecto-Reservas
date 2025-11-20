@@ -3,14 +3,17 @@ package com.proyecto.Proyecto.Reservas.domain.entities;
 import com.proyecto.Proyecto.Reservas.domain.enums.ParcelStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "parcels")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder(toBuilder = true)
 public class Parcel extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -12,14 +12,13 @@ import com.proyecto.Proyecto.Reservas.domain.repositories.UserRepository;
 import com.proyecto.Proyecto.Reservas.exception.NotFoundException;
 import com.proyecto.Proyecto.Reservas.services.mapper.SeatHoldMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -35,8 +34,6 @@ public class SeatHoldServiceImpl implements SeatHoldService {
 
     @Override
     public SeatHoldResponse holdSeat(SeatHoldCreateRequest request) {
-        log.info("Holding seat {} for trip {} and user {}",
-                request.seatNumber(), request.tripId(), request.userId());
 
         // Validar que el trip existe
         var trip = tripRepository.findById(request.tripId())
@@ -76,8 +73,6 @@ public class SeatHoldServiceImpl implements SeatHoldService {
         seatHold.setExpiresAt(LocalDateTime.now().plusMinutes(HOLD_DURATION_MINUTES));
 
         var savedHold = seatHoldRepository.save(seatHold);
-        log.info("Seat hold created with id: {} expires at: {}",
-                savedHold.getId(), savedHold.getExpiresAt());
 
         return seatHoldMapper.toResponse(savedHold);
     }
@@ -85,7 +80,6 @@ public class SeatHoldServiceImpl implements SeatHoldService {
     @Override
     @Transactional(readOnly = true)
     public SeatHoldResponse getById(Long id) {
-        log.info("Getting seat hold by id: {}", id);
         return seatHoldRepository.findById(id)
                 .map(seatHoldMapper::toResponse)
                 .orElseThrow(() -> new NotFoundException("Seat hold not found with id: " + id));
@@ -94,7 +88,6 @@ public class SeatHoldServiceImpl implements SeatHoldService {
     @Override
     @Transactional(readOnly = true)
     public List<SeatHoldResponse> getByTripId(Long tripId) {
-        log.info("Getting seat holds for trip id: {}", tripId);
 
         if (!tripRepository.existsById(tripId)) {
             throw new NotFoundException("Trip not found with id: " + tripId);
@@ -107,7 +100,6 @@ public class SeatHoldServiceImpl implements SeatHoldService {
     @Override
     @Transactional(readOnly = true)
     public SeatAvailabilityResponse checkSeatAvailability(Long tripId, Integer seatNumber) {
-        log.info("Checking availability for seat {} in trip {}", seatNumber, tripId);
 
         // Verificar si está vendido
         boolean isSold = ticketRepository.existsByTripIdAndSeatNumberAndStatus(
@@ -130,7 +122,6 @@ public class SeatHoldServiceImpl implements SeatHoldService {
 
     @Override
     public void expireHolds() {
-        log.info("Expiring seat holds");
 
         var expiredHolds = seatHoldRepository.findByStatusAndExpiresAtBefore(
                 SeatHoldStatus.HOLD, LocalDateTime.now());
@@ -140,12 +131,10 @@ public class SeatHoldServiceImpl implements SeatHoldService {
             seatHoldRepository.save(hold);
         }
 
-        log.info("Expired {} seat holds", expiredHolds.size());
     }
 
     @Override
     public void releaseHold(Long holdId) {
-        log.info("Releasing seat hold with id: {}", holdId);
 
         var hold = seatHoldRepository.findById(holdId)
                 .orElseThrow(() -> new NotFoundException("Seat hold not found with id: " + holdId));
@@ -153,7 +142,6 @@ public class SeatHoldServiceImpl implements SeatHoldService {
         hold.setStatus(SeatHoldStatus.EXPIRED);
         seatHoldRepository.save(hold);
 
-        log.info("Seat hold released with id: {}", holdId);
     }
 }
 
