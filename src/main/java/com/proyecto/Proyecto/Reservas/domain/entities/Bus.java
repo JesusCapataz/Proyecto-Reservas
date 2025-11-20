@@ -29,4 +29,21 @@ public class Bus {
 
     @OneToMany(mappedBy = "bus", cascade = CascadeType.ALL)
     private List<Seat> seats;
+
+    public void addSeat(Seat seat) {
+        seats.add(seat);
+        seat.setBus(this);
+    }
+
+    public void removeSeat(Seat seat) {
+        seats.remove(seat);
+        seat.setBus(null);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (status == null) {
+            status = BusStatus.ACTIVE;
+        }
+    }
 }
