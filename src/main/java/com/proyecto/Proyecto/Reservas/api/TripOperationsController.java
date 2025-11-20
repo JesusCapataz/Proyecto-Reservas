@@ -8,11 +8,10 @@ import com.proyecto.Proyecto.Reservas.domain.repositories.TripRepository;
 import com.proyecto.Proyecto.Reservas.exception.NotFoundException;
 import com.proyecto.Proyecto.Reservas.services.mapper.TripMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
+
 @RestController
 @RequestMapping("/api/trips/{tripId}")
 @RequiredArgsConstructor
@@ -27,7 +26,6 @@ public class TripOperationsController {
      */
     @PostMapping("/boarding/open")
     public ResponseEntity<TripResponse> openBoarding(@PathVariable Long tripId) {
-        log.info("POST /api/trips/{}/boarding/open - Opening boarding", tripId);
 
         var trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new NotFoundException("Trip not found with id: " + tripId));
@@ -47,7 +45,6 @@ public class TripOperationsController {
         trip.setStatus(TripStatus.BOARDING);
         var updatedTrip = tripRepository.save(trip);
 
-        log.info("Boarding opened for trip: {}", tripId);
         return ResponseEntity.ok(tripMapper.toResponse(updatedTrip));
     }
 
@@ -56,7 +53,6 @@ public class TripOperationsController {
      */
     @PostMapping("/boarding/close")
     public ResponseEntity<TripResponse> closeBoarding(@PathVariable Long tripId) {
-        log.info("POST /api/trips/{}/boarding/close - Closing boarding", tripId);
 
         var trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new NotFoundException("Trip not found with id: " + tripId));
@@ -70,7 +66,6 @@ public class TripOperationsController {
         trip.setStatus(TripStatus.SCHEDULED);
         var updatedTrip = tripRepository.save(trip);
 
-        log.info("Boarding closed for trip: {}", tripId);
         return ResponseEntity.ok(tripMapper.toResponse(updatedTrip));
     }
 
@@ -79,7 +74,6 @@ public class TripOperationsController {
      */
     @PostMapping("/depart")
     public ResponseEntity<TripResponse> departTrip(@PathVariable Long tripId) {
-        log.info("POST /api/trips/{}/depart - Departing trip", tripId);
 
         var trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new NotFoundException("Trip not found with id: " + tripId));
@@ -101,7 +95,6 @@ public class TripOperationsController {
         trip.setStatus(TripStatus.DEPARTED);
         var updatedTrip = tripRepository.save(trip);
 
-        log.info("Trip departed: {}", tripId);
         return ResponseEntity.ok(tripMapper.toResponse(updatedTrip));
     }
 
@@ -110,7 +103,6 @@ public class TripOperationsController {
      */
     @PostMapping("/arrive")
     public ResponseEntity<TripResponse> arriveTrip(@PathVariable Long tripId) {
-        log.info("POST /api/trips/{}/arrive - Arriving trip", tripId);
 
         var trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new NotFoundException("Trip not found with id: " + tripId));
@@ -124,7 +116,6 @@ public class TripOperationsController {
         trip.setStatus(TripStatus.ARRIVED);
         var updatedTrip = tripRepository.save(trip);
 
-        log.info("Trip arrived: {}", tripId);
         return ResponseEntity.ok(tripMapper.toResponse(updatedTrip));
     }
 
@@ -133,7 +124,6 @@ public class TripOperationsController {
      */
     @PostMapping("/cancel")
     public ResponseEntity<TripResponse> cancelTrip(@PathVariable Long tripId) {
-        log.info("POST /api/trips/{}/cancel - Cancelling trip", tripId);
 
         var trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new NotFoundException("Trip not found with id: " + tripId));
@@ -147,7 +137,6 @@ public class TripOperationsController {
         trip.setStatus(TripStatus.CANCELLED);
         var updatedTrip = tripRepository.save(trip);
 
-        log.info("Trip cancelled: {}", tripId);
         return ResponseEntity.ok(tripMapper.toResponse(updatedTrip));
     }
 }

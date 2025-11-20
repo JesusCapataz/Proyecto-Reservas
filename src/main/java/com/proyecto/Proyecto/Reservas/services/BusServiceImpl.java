@@ -6,14 +6,12 @@ import com.proyecto.Proyecto.Reservas.domain.repositories.BusRepository;
 import com.proyecto.Proyecto.Reservas.exception.NotFoundException;
 import com.proyecto.Proyecto.Reservas.services.mapper.BusMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -24,7 +22,6 @@ public class BusServiceImpl implements BusService {
 
     @Override
     public BusResponse create(BusCreateRequest request) {
-        log.info("Creating bus with plate: {}", request.plate());
 
         // Validar que la placa no exista
         if (busRepository.findByPlate(request.plate()).isPresent()) {
@@ -50,7 +47,6 @@ public class BusServiceImpl implements BusService {
         }
 
         var savedBus = busRepository.save(bus);
-        log.info("Bus created with id: {}", savedBus.getId());
 
         return busMapper.toResponse(savedBus);
     }
@@ -58,7 +54,6 @@ public class BusServiceImpl implements BusService {
     @Override
     @Transactional(readOnly = true)
     public BusResponse getById(Long id) {
-        log.info("Getting bus by id: {}", id);
         return busRepository.findById(id)
                 .map(busMapper::toResponse)
                 .orElseThrow(() -> new NotFoundException("Bus not found with id: " + id));
@@ -67,7 +62,6 @@ public class BusServiceImpl implements BusService {
     @Override
     @Transactional(readOnly = true)
     public BusResponse getByPlate(String plate) {
-        log.info("Getting bus by plate: {}", plate);
         return busRepository.findByPlate(plate)
                 .map(busMapper::toResponse)
                 .orElseThrow(() -> new NotFoundException("Bus not found with plate: " + plate));
@@ -76,13 +70,11 @@ public class BusServiceImpl implements BusService {
     @Override
     @Transactional(readOnly = true)
     public List<BusResponse> getAll() {
-        log.info("Getting all buses");
         return busMapper.toResponseList(busRepository.findAll());
     }
 
     @Override
     public BusResponse update(Long id, BusUpdateRequest request) {
-        log.info("Updating bus with id: {}", id);
 
         var bus = busRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Bus not found with id: " + id));
@@ -97,20 +89,17 @@ public class BusServiceImpl implements BusService {
         busMapper.updateEntityFromDto(request, bus);
         var updatedBus = busRepository.save(bus);
 
-        log.info("Bus updated with id: {}", updatedBus.getId());
         return busMapper.toResponse(updatedBus);
     }
 
     @Override
     public void delete(Long id) {
-        log.info("Deleting bus with id: {}", id);
 
         if (!busRepository.existsById(id)) {
             throw new NotFoundException("Bus not found with id: " + id);
         }
 
         busRepository.deleteById(id);
-        log.info("Bus deleted with id: {}", id);
     }
 }
 

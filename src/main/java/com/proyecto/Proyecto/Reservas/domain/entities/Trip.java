@@ -3,15 +3,18 @@ package com.proyecto.Proyecto.Reservas.domain.entities;
 import com.proyecto.Proyecto.Reservas.domain.enums.TripStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "trips")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder(toBuilder = true)
 public class Trip extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,7 +8,6 @@ import com.proyecto.Proyecto.Reservas.domain.repositories.*;
 import com.proyecto.Proyecto.Reservas.exception.NotFoundException;
 import com.proyecto.Proyecto.Reservas.services.mapper.TicketMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Slf4j
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -31,8 +30,6 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketResponse createTicket(TicketCreateRequest request) {
-        log.info("Creating ticket for trip {} passenger {} seat {}",
-                request.tripId(), request.passengerId(), request.seatNumber());
 
         // Validar que el trip existe
         var trip = tripRepository.findById(request.tripId())
@@ -100,7 +97,6 @@ public class TicketServiceImpl implements TicketService {
         ticket.setQrCode(generateQrCode());
 
         var savedTicket = ticketRepository.save(ticket);
-        log.info("Ticket created with id: {} and QR code: {}", savedTicket.getId(), savedTicket.getQrCode());
 
         return ticketMapper.toResponse(savedTicket);
     }
@@ -108,7 +104,6 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional(readOnly = true)
     public TicketResponse getById(Long id) {
-        log.info("Getting ticket by id: {}", id);
         return ticketRepository.findById(id)
                 .map(ticketMapper::toResponse)
                 .orElseThrow(() -> new NotFoundException("Ticket not found with id: " + id));
@@ -117,7 +112,6 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional(readOnly = true)
     public TicketResponse getByQrCode(String qrCode) {
-        log.info("Getting ticket by QR code: {}", qrCode);
         return ticketRepository.findByQrCode(qrCode)
                 .map(ticketMapper::toResponse)
                 .orElseThrow(() -> new NotFoundException("Ticket not found with QR code: " + qrCode));
@@ -126,7 +120,6 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional(readOnly = true)
     public List<TicketResponse> getByTripId(Long tripId) {
-        log.info("Getting tickets for trip id: {}", tripId);
 
         if (!tripRepository.existsById(tripId)) {
             throw new NotFoundException("Trip not found with id: " + tripId);
@@ -139,7 +132,6 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional(readOnly = true)
     public List<TicketResponse> getByPassengerId(Long passengerId) {
-        log.info("Getting tickets for passenger id: {}", passengerId);
 
         if (!userRepository.existsById(passengerId)) {
             throw new NotFoundException("Passenger not found with id: " + passengerId);
@@ -151,7 +143,6 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketResponse updateStatus(Long id, TicketUpdateRequest request) {
-        log.info("Updating ticket status with id: {}", id);
 
         var ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Ticket not found with id: " + id));
@@ -159,13 +150,11 @@ public class TicketServiceImpl implements TicketService {
         ticketMapper.updateEntityFromDto(request, ticket);
         var updatedTicket = ticketRepository.save(ticket);
 
-        log.info("Ticket status updated with id: {}", updatedTicket.getId());
         return ticketMapper.toResponse(updatedTicket);
     }
 
     @Override
     public TicketResponse cancelTicket(Long id) {
-        log.info("Cancelling ticket with id: {}", id);
 
         var ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Ticket not found with id: " + id));
@@ -177,20 +166,17 @@ public class TicketServiceImpl implements TicketService {
         ticket.setStatus(TicketStatus.CANCELLED);
         var cancelledTicket = ticketRepository.save(ticket);
 
-        log.info("Ticket cancelled with id: {}", cancelledTicket.getId());
         return ticketMapper.toResponse(cancelledTicket);
     }
 
     @Override
     public void delete(Long id) {
-        log.info("Deleting ticket with id: {}", id);
 
         if (!ticketRepository.existsById(id)) {
             throw new NotFoundException("Ticket not found with id: " + id);
         }
 
         ticketRepository.deleteById(id);
-        log.info("Ticket deleted with id: {}", id);
     }
 
     private String generateQrCode() {

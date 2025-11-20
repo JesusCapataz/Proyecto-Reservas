@@ -8,14 +8,12 @@ import com.proyecto.Proyecto.Reservas.domain.repositories.TripRepository;
 import com.proyecto.Proyecto.Reservas.exception.NotFoundException;
 import com.proyecto.Proyecto.Reservas.services.mapper.TripMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -28,7 +26,6 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public TripResponse create(TripCreateRequest request) {
-        log.info("Creating trip for route id: {} on date: {}", request.routeId(), request.date());
 
         // Validar que la ruta existe
         var route = routeRepository.findById(request.routeId())
@@ -48,7 +45,6 @@ public class TripServiceImpl implements TripService {
         trip.setBus(bus);
 
         var savedTrip = tripRepository.save(trip);
-        log.info("Trip created with id: {}", savedTrip.getId());
 
         return tripMapper.toResponse(savedTrip);
     }
@@ -56,7 +52,6 @@ public class TripServiceImpl implements TripService {
     @Override
     @Transactional(readOnly = true)
     public TripResponse getById(Long id) {
-        log.info("Getting trip by id: {}", id);
         return tripRepository.findById(id)
                 .map(tripMapper::toResponse)
                 .orElseThrow(() -> new NotFoundException("Trip not found with id: " + id));
@@ -65,14 +60,12 @@ public class TripServiceImpl implements TripService {
     @Override
     @Transactional(readOnly = true)
     public List<TripResponse> getAll() {
-        log.info("Getting all trips");
         return tripMapper.toResponseList(tripRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TripResponse> searchTrips(Long routeId, LocalDate date) {
-        log.info("Searching trips for route: {} on date: {}", routeId, date);
 
         if (routeId != null && date != null) {
             var trips = tripRepository.findByRouteIdAndDate(routeId, date);
@@ -97,7 +90,6 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public TripResponse update(Long id, TripUpdateRequest request) {
-        log.info("Updating trip with id: {}", id);
 
         var trip = tripRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Trip not found with id: " + id));
@@ -112,20 +104,17 @@ public class TripServiceImpl implements TripService {
         tripMapper.updateEntityFromDto(request, trip);
         var updatedTrip = tripRepository.save(trip);
 
-        log.info("Trip updated with id: {}", updatedTrip.getId());
         return tripMapper.toResponse(updatedTrip);
     }
 
     @Override
     public void delete(Long id) {
-        log.info("Deleting trip with id: {}", id);
 
         if (!tripRepository.existsById(id)) {
             throw new NotFoundException("Trip not found with id: " + id);
         }
 
         tripRepository.deleteById(id);
-        log.info("Trip deleted with id: {}", id);
     }
 }
 
