@@ -15,6 +15,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableMethodSecurity // Para usar @PreAuthorize en los controllers
@@ -62,7 +65,7 @@ public class SecurityConfig {
 
                         // DISPATCHER - gestión de viajes y asignaciones
                         .requestMatchers(HttpMethod.POST, "/api/trips").hasAnyRole("ADMIN", "DISPATCHER")
-                        .requestMatchers(HttpMethod.PUT, "/api/trips/**").hasAnyRole("ADMIN", "DISPATCHER")
+                        .requestMatchers(HttpMethod.PUT, "/api/trips/**").hasAnyRole("ADMIN", "DISPATCHER", "PASSENGER")
                         .requestMatchers("/api/assignments/**").hasRole("DISPATCHER")
                         .requestMatchers("/api/trips/*/boarding/**").hasRole("DISPATCHER")
                         .requestMatchers(HttpMethod.POST, "/api/trips/*/cancel").hasAnyRole("DISPATCHER", "ADMIN")
@@ -97,5 +100,17 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:4200");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

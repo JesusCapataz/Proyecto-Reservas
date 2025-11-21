@@ -52,6 +52,13 @@ public class SeatHoldController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/trips/{tripId}/seats/availability")
+    public ResponseEntity<List<SeatHoldResponse>> checkAvailability(
+            @PathVariable Long tripId) {
+        var response = seatHoldService.getByTripId(tripId);
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> releaseHold(@PathVariable Long id) {
         seatHoldService.releaseHold(id);
